@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>JobTracker Pro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+:root{
+  --bg:#0f0e13;
+  --surface:#1a1825;
+  --surface2:#211f2e;
+  --surface3:#2a2739;
+  --border:#2e2b40;
+  --border2:#3a3750;
+  --txt:#f0eeff;
+  --txt2:#a09cc0;
+  --txt3:#6b6890;
+  --accent:#7c6af7;
+  --accent2:#a78bfa;
+  --accentg:linear-gradient(135deg,#7c6af7,#c084fc);
+  --green:#22d3a0;
+  --greenl:#0d2e25;
+  --red:#f87171;
+  --redl:#2e1515;
+  --orange:#fb923c;
+  --orangel:#2e1e0d;
+  --yellow:#fbbf24;
+  --yellowl:#2e260a;
+  --blue:#60a5fa;
+  --bluel:#0d1e2e;
+  --pink:#f472b6;
+  --pinkl:#2e1020;
+  --r:14px;
+  --rsm:8px;
+  --shadow:0 4px 24px rgba(0,0,0,.4);
+  --shadowlg:0 12px 48px rgba(0,0,0,.6);
+  --sw:230px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;font-size:15px;-webkit-font-smoothing:antialiased}
+h1,h2,h3,.display{font-family:'Bricolage Grotesque',sans-serif}
+.gradient-text{background:linear-gradient(135deg,#c084fc 0%,#818cf8 40%,#38bdf8 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.gradient-text-gold{background:linear-gradient(135deg,#fbbf24 0%,#fb923c 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--surface)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
+
+/* Layout */
+.app{display:flex;min-height:100vh}
+
+/* Sidebar */
+.sidebar{width:var(--sw);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:20px 14px;position:fixed;top:0;left:0;bottom:0;z-index:100;transition:transform .3s}
+.logo-wrap{display:flex;align-items:center;gap:10px;padding:0 6px 22px;border-bottom:1px solid var(--border);margin-bottom:18px}
+.logo-mark{width:34px;height:34px;border-radius:10px;background:var(--accentg);display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-size:17px;color:#fff;flex-shrink:0}
+.logo-name{font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.5px;background:linear-gradient(135deg,#e0d9ff,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+
+.nav-group{margin-bottom:10px}
+.nav-lbl{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--txt3);padding:0 8px;margin-bottom:4px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:10px;cursor:pointer;color:var(--txt2);font-weight:600;font-size:14.5px;transition:all .15s;margin-bottom:1px;user-select:none;position:relative}
+.nav-item:hover{background:var(--surface2);color:var(--txt)}
+.nav-item.active{background:rgba(124,106,247,.15);color:var(--accent2)}
+.nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:60%;background:var(--accent);border-radius:0 3px 3px 0}
+.nav-badge{margin-left:auto;font-size:10px;font-weight:700;background:var(--accent);color:#fff;padding:1px 6px;border-radius:99px}
+.nav-weekend{color:var(--yellow)!important}
+.nav-weekend.active{background:rgba(251,191,36,.12)!important;color:var(--yellow)!important}
+.nav-weekend.active::before{background:var(--yellow)!important}
+
+.sb-bottom{margin-top:auto;padding-top:14px;border-top:1px solid var(--border)}
+.user-pill{display:flex;align-items:center;gap:9px;padding:9px;border-radius:10px;cursor:pointer;transition:background .15s}
+.user-pill:hover{background:var(--surface2)}
+.ava{width:32px;height:32px;border-radius:50%;background:var(--accentg);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;flex-shrink:0}
+.user-info .name{font-weight:700;font-size:14px}
+.user-info .sub{font-size:11px;color:var(--txt3)}
+
+/* Main */
+.main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;min-height:100vh}
+
+/* Header */
+.header{background:rgba(15,14,19,.8);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 32px;height:66px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:50}
+.search-w{flex:1;max-width:340px;position:relative}
+.search-w svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--txt3)}
+.search-w input{width:100%;padding:9px 14px 9px 36px;background:var(--surface2);border:1px solid var(--border);border-radius:11px;font-family:inherit;font-size:14.5px;color:var(--txt);outline:none;transition:border-color .15s}
+.search-w input:focus{border-color:var(--accent)}
+.search-w input::placeholder{color:var(--txt3)}
+.h-actions{display:flex;align-items:center;gap:8px;margin-left:auto}
+.ico-btn{width:36px;height:36px;border-radius:9px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--txt2);transition:all .15s;position:relative}
+.ico-btn:hover{background:var(--surface3);color:var(--txt)}
+.ndot{width:7px;height:7px;border-radius:50%;background:var(--red);position:absolute;top:6px;right:6px;border:1.5px solid var(--surface)}
+.h-ava{width:34px;height:34px;border-radius:50%;background:var(--accentg);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:12px;cursor:pointer;border:2px solid var(--border2)}
+
+/* Content */
+.content{padding:30px 32px 60px;flex:1}
+
+/* Daily Task Banner */
+.daily-banner{border-radius:16px;padding:20px 22px;margin-bottom:26px;background:var(--surface);border:1px solid var(--border);position:relative;overflow:hidden}
+.daily-banner::before{content:'';position:absolute;inset:0;background:var(--accentg);opacity:.06;pointer-events:none}
+.daily-banner.weekend-banner::before{background:linear-gradient(135deg,var(--yellow),var(--orange));opacity:.08}
+.db-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:12px;flex-wrap:wrap}
+.db-title-row{display:flex;align-items:center;gap:10px}
+.db-emoji{font-size:26px}
+.db-title{font-family:'Bricolage Grotesque',sans-serif;font-size:28px;font-weight:800;background:linear-gradient(135deg,#f0eeff,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-.3px}
+.db-date{font-size:14px;color:var(--txt3);margin-top:3px;font-weight:500}
+.db-progress-wrap{display:flex;align-items:center;gap:10px}
+.db-pct{font-family:'Bricolage Grotesque',sans-serif;font-size:28px;color:var(--accent2)}
+.db-pct.weekend{color:var(--yellow)}
+.db-tasks{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.task-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:13px 15px;display:flex;align-items:flex-start;gap:11px;cursor:pointer;transition:all .15s;user-select:none}
+.task-card:hover{background:var(--surface3);border-color:var(--border2)}
+.task-card.done{opacity:.6;background:var(--surface)}
+.task-check{width:20px;height:20px;border-radius:6px;border:2px solid var(--border2);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.task-card.done .task-check{background:var(--green);border-color:var(--green)}
+.task-info .t-label{font-weight:700;font-size:15px;color:var(--txt)}
+.task-info .t-sub{font-size:13px;color:var(--txt3);margin-top:2px}
+.task-chip{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11.5px;font-weight:800;letter-spacing:.04em;margin-bottom:5px}
+
+/* Weekend highlight */
+.weekend-task .task-chip{background:rgba(251,191,36,.15);color:var(--yellow)}
+.weekend-task .task-check{border-color:rgba(251,191,36,.4)}
+.weekend-task.done .task-check{background:var(--yellow);border-color:var(--yellow)}
+
+/* Progress ring */
+.ring-wrap{position:relative;width:54px;height:54px;flex-shrink:0}
+.ring-wrap svg{transform:rotate(-90deg)}
+.ring-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--txt)}
+
+/* Stat cards */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;cursor:default;transition:transform .2s,box-shadow .2s;position:relative;overflow:hidden}
+.stat-card::after{content:'';position:absolute;top:-30px;right:-30px;width:80px;height:80px;border-radius:50%;opacity:.06}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.sc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
+.sc-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px}
+.sc-trend{font-size:13px;font-weight:700;padding:3px 8px;border-radius:20px;display:flex;align-items:center;gap:3px}
+.tup{background:rgba(34,211,160,.12);color:var(--green)}
+.tdn{background:rgba(248,113,113,.12);color:var(--red)}
+.sc-num{font-family:'Bricolage Grotesque',sans-serif;font-size:46px;letter-spacing:-2px;line-height:1;margin-bottom:4px;font-weight:800}
+.sc-lbl{font-size:14px;color:var(--txt2);font-weight:500}
+
+/* Panels */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:22px}
+.ph{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.ph-title{font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:800;color:#f0eeff;letter-spacing:-.2px}
+.ph-sub{font-size:12px;color:var(--txt3);margin-top:1px}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:11px;font-family:inherit;font-size:14.5px;font-weight:700;cursor:pointer;border:none;outline:none;transition:all .15s}
+.btn-primary{background:var(--accentg);color:#fff}
+.btn-primary:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 4px 20px rgba(124,106,247,.4)}
+.btn-ghost{background:var(--surface2);color:var(--txt2);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--surface3);color:var(--txt)}
+.btn-yellow{background:rgba(251,191,36,.15);color:var(--yellow);border:1px solid rgba(251,191,36,.3)}
+.btn-yellow:hover{background:rgba(251,191,36,.25)}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-danger{background:var(--redl);color:var(--red);border:1px solid rgba(248,113,113,.2)}
+
+/* Filter chips */
+.fbar{display:flex;gap:6px;flex-wrap:wrap}
+.fchip{padding:6px 14px;border-radius:20px;font-size:13.5px;font-weight:700;border:1px solid var(--border);cursor:pointer;background:var(--surface2);color:var(--txt2);transition:all .12s}
+.fchip:hover{border-color:var(--accent);color:var(--accent2)}
+.fchip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* Table */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead th{padding:11px 16px;text-align:left;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--txt3);border-bottom:1px solid var(--border);white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--border);transition:background .12s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--surface2)}
+td{padding:13px 16px;font-size:15px}
+.co-cell{display:flex;align-items:center;gap:10px}
+.co-logo{width:30px;height:30px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--txt);flex-shrink:0}
+.co-name{font-weight:800;font-size:15px;color:var(--txt)}
+.co-role{font-size:11.5px;color:var(--txt3)}
+.role-txt{color:var(--txt2);font-weight:400}
+.notes-td{max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--txt3);font-size:12.5px}
+
+/* Badges */
+.badge{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:13px;font-weight:800;white-space:nowrap}
+.bdot{width:6px;height:6px;border-radius:50%}
+.b-applied{background:var(--bluel);color:var(--blue)}
+.b-applied .bdot{background:var(--blue)}
+.b-interview{background:var(--orangel);color:var(--orange)}
+.b-interview .bdot{background:var(--orange)}
+.b-offer{background:var(--greenl);color:var(--green)}
+.b-offer .bdot{background:var(--green)}
+.b-rejected{background:var(--redl);color:var(--red)}
+.b-rejected .bdot{background:var(--red)}
+
+.act-cell{display:flex;gap:5px}
+.act-btn{width:28px;height:28px;border-radius:7px;background:transparent;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--txt3);transition:all .12s}
+.act-btn:hover{background:var(--surface2);color:var(--txt)}
+.act-btn.del:hover{background:var(--redl);color:var(--red);border-color:rgba(248,113,113,.3)}
+
+/* Two col */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+
+/* Progress bar */
+.pb-wrap{height:7px;background:var(--surface3);border-radius:99px;overflow:hidden}
+.pb-fill{height:100%;border-radius:99px;transition:width .6s ease}
+
+/* Activity */
+.act-grid{display:grid;gap:9px;padding:14px}
+.act-item{display:flex;align-items:center;gap:12px;background:var(--surface2);padding:12px 14px;border-radius:10px}
+.act-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.act-info{flex:1}
+.act-lbl{font-weight:700;font-size:15px;margin-bottom:5px;color:var(--txt)}
+.act-count{font-size:15px;font-weight:800;color:var(--txt);white-space:nowrap}
+
+/* Goals */
+.goal-item{background:var(--surface2);border-radius:10px;padding:13px 15px;margin-bottom:9px}
+.gt{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.g-lbl{font-weight:700;font-size:15px;color:var(--txt)}
+.g-pct{font-size:12px;font-weight:700;color:var(--accent2)}
+.g-frac{font-size:11.5px;color:var(--txt3);margin-top:5px}
+
+/* Bar chart */
+.chart-wrap{padding:14px 18px 18px}
+.bar-chart{display:flex;align-items:flex-end;gap:7px;height:110px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px}
+.bar-fill{width:100%;border-radius:5px 5px 0 0;min-height:4px;transition:opacity .2s}
+.bar-fill:hover{opacity:1!important;filter:brightness(1.15)}
+.bar-lbl{font-size:12.5px;color:var(--txt3);font-weight:700}
+.chart-legend{display:flex;gap:14px;margin-top:10px}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--txt3)}
+.leg-dot{width:8px;height:8px;border-radius:50%}
+
+/* Modal */
+.overlay{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px;animation:fi .15s ease}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:18px;width:100%;max-width:500px;box-shadow:var(--shadowlg);animation:su .2s ease}
+@keyframes su{from{transform:translateY(16px);opacity:0}to{transform:none;opacity:1}}
+.mh{padding:20px 22px 0;display:flex;align-items:center;justify-content:space-between}
+.mh-title{font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:800;background:linear-gradient(135deg,#f0eeff,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.mb{padding:18px 22px 22px;display:grid;gap:14px}
+.mf{padding:0 22px 20px;display:flex;gap:8px;justify-content:flex-end}
+.mcl{width:28px;height:28px;border-radius:7px;background:var(--surface2);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--txt3);transition:background .12s}
+.mcl:hover{background:var(--surface3)}
+.fg{display:grid;gap:5px}
+.fl{font-size:13px;font-weight:800;color:var(--txt2);text-transform:uppercase;letter-spacing:.05em}
+.fi,.fs,.fta{width:100%;padding:10px 14px;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;font-family:inherit;font-size:15px;color:var(--txt);outline:none;transition:border-color .15s}
+.fi:focus,.fs:focus,.fta:focus{border-color:var(--accent)}
+.fta{resize:vertical;min-height:80px}
+.fs option{background:var(--surface2)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* Empty state */
+.empty{text-align:center;padding:48px 24px;color:var(--txt3)}
+.empty p{font-size:15px}
+
+/* Sort */
+.sort-sel{padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);font-family:inherit;font-size:12px;color:var(--txt2);outline:none;cursor:pointer}
+.sort-sel:focus{border-color:var(--accent)}
+
+/* Section header */
+.sech{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.sec-title{font-family:'Bricolage Grotesque',sans-serif;font-size:32px;font-weight:800;background:linear-gradient(135deg,#f0eeff 0%,#c084fc 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-.5px}
+.sec-sub{font-size:15px;color:var(--txt3);margin-top:2px}
+
+/* ─── Calendar ─── */
+.cal-wrap{padding:16px}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.cal-month{font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;background:linear-gradient(135deg,#f0eeff,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.cal-nav-btn{width:30px;height:30px;border-radius:7px;background:var(--surface2);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--txt2);transition:all .12s}
+.cal-nav-btn:hover{background:var(--surface3);color:var(--txt)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-dow{font-size:12px;font-weight:800;color:var(--txt3);text-align:center;padding:4px 0;text-transform:uppercase;letter-spacing:.05em}
+.cal-day{aspect-ratio:1;border-radius:9px;border:1px solid transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;position:relative;font-size:15px;font-weight:700;color:var(--txt2)}
+.cal-day:hover{background:var(--surface2);border-color:var(--border);color:var(--txt)}
+.cal-day.today{background:rgba(124,106,247,.15);border-color:var(--accent);color:var(--accent2)}
+.cal-day.has-data{color:var(--txt)}
+.cal-day.selected{background:var(--accent);border-color:var(--accent);color:#fff}
+.cal-day.empty-day{cursor:default;opacity:.3}
+.cal-dots{display:flex;gap:2px;position:absolute;bottom:4px}
+.cal-dot{width:5px;height:5px;border-radius:50%}
+.cal-day.weekend-day{color:var(--yellow)}
+
+/* Cal detail */
+.cal-detail{background:var(--surface2);border-radius:12px;padding:16px;border:1px solid var(--border)}
+.cal-detail-title{font-family:'Bricolage Grotesque',sans-serif;font-size:16px;color:var(--txt);margin-bottom:12px}
+.cd-section{margin-bottom:10px}
+.cd-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--txt3);margin-bottom:5px}
+.cd-items{display:flex;flex-direction:column;gap:4px}
+.cd-item{display:flex;align-items:center;gap:7px;font-size:12.5px}
+.cd-check{width:14px;height:14px;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cd-check.done{background:var(--green)}
+.cd-check.miss{background:var(--red)}
+
+/* Behavioral Prep */
+.bq-sections{padding:16px;display:grid;gap:10px}
+.bq-cat{background:var(--surface2);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.bq-cat-header{padding:13px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .12s;user-select:none}
+.bq-cat-header:hover{background:var(--surface3)}
+.bq-cat-emoji{font-size:20px}
+.bq-cat-title{font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:800;color:#f0eeff;flex:1;letter-spacing:-.2px}
+.bq-cat-count{font-size:11px;font-weight:700;background:rgba(124,106,247,.2);color:var(--accent2);padding:2px 8px;border-radius:20px}
+.bq-cat-body{padding:0 16px 14px;display:grid;gap:8px}
+.bq-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.bq-q{padding:12px 14px;display:flex;align-items:flex-start;gap:10px;cursor:pointer;transition:background .12s}
+.bq-q:hover{background:var(--surface2)}
+.bq-q-num{font-size:11px;font-weight:700;color:var(--txt3);min-width:24px;margin-top:1px}
+.bq-q-text{font-weight:700;font-size:15.5px;color:var(--txt);flex:1}
+.bq-arrow{color:var(--txt3);transition:transform .2s;flex-shrink:0;margin-top:2px}
+.bq-arrow.open{transform:rotate(180deg)}
+.bq-answer{padding:0 14px 14px;border-top:1px solid var(--border)}
+.bq-star{display:grid;gap:8px;padding-top:12px}
+.star-row{background:var(--surface2);border-radius:8px;padding:10px 12px}
+.star-tag{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;padding:3px 8px;border-radius:20px}
+.star-s{background:rgba(96,165,250,.15);color:var(--blue)}
+.star-t{background:rgba(251,191,36,.15);color:var(--yellow)}
+.star-a{background:rgba(124,106,247,.15);color:var(--accent2)}
+.star-r{background:rgba(34,211,160,.15);color:var(--green)}
+.star-text{font-size:12.5px;color:var(--txt2);line-height:1.5}
+.strategy-box{background:rgba(124,106,247,.08);border:1px solid rgba(124,106,247,.2);border-radius:8px;padding:10px 12px;margin-top:8px}
+.strategy-title{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--accent2);margin-bottom:4px}
+.strategy-text{font-size:12.5px;color:var(--txt2);line-height:1.5}
+
+/* Responsive */
+@media(max-width:1100px){.stats-grid{grid-template-columns:repeat(2,1fr)}.two-col{grid-template-columns:1fr}}
+@media(max-width:768px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:none;box-shadow:var(--shadowlg)}.main{margin-left:0}.content{padding:18px 14px 50px}.header{padding:0 14px}.stats-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useMemo, useCallback } = React;
+
+// ─── DATA ─────────────────────────────────────────────────────────────────────
+const MOCK_JOBS = [];
+
+const CHART_DATA = [
+  {label:"Jan",apps:3,interviews:1},{label:"Feb",apps:8,interviews:3},
+  {label:"Mar",apps:14,interviews:5},{label:"Apr",apps:6,interviews:2},
+];
+
+function isWeekend(date) {
+  const d = new Date(date);
+  return d.getDay()===0||d.getDay()===6;
+}
+
+function getTodayStr() {
+  return new Date().toISOString().slice(0,10);
+}
+
+function buildDailyTasks(dateStr) {
+  const weekend = isWeekend(dateStr);
+  const base = [
+    { id:'lc1', label:'Leetcode Problems', sub:'Solve 2–3 problems', emoji:'💻', chip:'Coding', goal:3 },
+    { id:'lc2', label:'Review Past Leetcode', sub:'Revisit 1–2 solved problems', emoji:'🔄', chip:'Review', goal:2 },
+    { id:'jobs', label:'Job Applications', sub:'Apply to 10–15 jobs', emoji:'📤', chip:'Applications', goal:15 },
+    { id:'linkedin', label:'LinkedIn Connections', sub:'Send 3–5 connection requests', emoji:'🤝', chip:'Networking', goal:5 },
+  ];
+  const we = [
+    { id:'behavioral', label:'Behavioural Interview Prep', sub:'Practice STAR stories', emoji:'🎤', chip:'Weekend', goal:1, isWeekend:true },
+    { id:'projects', label:'Work on Projects', sub:'Build & push to GitHub', emoji:'🛠️', chip:'Weekend', goal:1, isWeekend:true },
+    { id:'irl', label:'Real-Life Connections', sub:'Find & reach out to people in field', emoji:'🌐', chip:'Weekend', goal:1, isWeekend:true },
+  ];
+  return weekend ? [...base, ...we] : base;
+}
+
+// ─── Behavioral Questions ─────────────────────────────────────────────────────
+const BQ_DATA = [
+  {
+    category:"🧑‍💼 Tell Me About Yourself",
+    questions:[
+      {
+        q:"Tell me about yourself.",
+        strategy:"Lead with your current role/studies, highlight 1–2 key achievements, explain why you're excited about this opportunity. Keep it under 90 seconds.",
+        star:{
+          s:"I'm currently a Computer Science student with a focus on software engineering and distributed systems.",
+          t:"I've been working to build strong full-stack and backend skills while actively seeking internships at high-growth tech companies.",
+          a:"I built a real-time collaboration tool used by 200+ students, contributed to open-source projects, and consistently solve algorithmic problems on LeetCode. I've applied to 30+ companies and am in final rounds with several.",
+          r:"I'm looking to bring these skills to [Company] because I admire your engineering culture and the scale of problems you solve."
+        }
+      },
+      {
+        q:"Walk me through your resume.",
+        strategy:"Don't just recite — narrate a growth story. Connect each experience to the next. Show progression and intentionality.",
+        star:{
+          s:"I started with a strong CS foundation, then deliberately chose projects that pushed me toward distributed systems.",
+          t:"Each experience was chosen to fill a specific skill gap — backend, then frontend, then ML.",
+          a:"I interned at X, led a capstone project on Y, and built Z independently.",
+          r:"The result is a well-rounded skill set that directly maps to the [Role] responsibilities."
+        }
+      }
+    ]
+  },
+  {
+    category:"💡 Problem Solving & Technical Challenges",
+    questions:[
+      {
+        q:"Tell me about a time you solved a complex technical problem.",
+        strategy:"Pick a problem with clear technical depth. Quantify the impact. Show your debugging/analytical process.",
+        star:{
+          s:"At my internship, our API response time had degraded to 4 seconds, causing users to abandon the app.",
+          t:"I was tasked with diagnosing and fixing the performance issue within two weeks.",
+          a:"I profiled the code, identified N+1 database queries, implemented eager loading and Redis caching, and added query indexes.",
+          r:"Response time dropped from 4s to 180ms — a 95% improvement — and user retention increased by 18%."
+        }
+      },
+      {
+        q:"Describe a time when you had to learn a new technology quickly.",
+        strategy:"Demonstrate resourcefulness, self-directed learning, and the ability to deliver under time pressure.",
+        star:{
+          s:"Two days before a hackathon, our team decided to use WebSockets — a technology I'd never used.",
+          t:"I needed to build a real-time chat feature in 48 hours.",
+          a:"I spent 3 hours on docs and tutorials, built a prototype, got feedback from a senior dev, and iterated rapidly.",
+          r:"We shipped the feature, won 2nd place, and I've since used WebSockets in two production projects."
+        }
+      },
+      {
+        q:"Tell me about a time you had to debug a difficult issue.",
+        strategy:"Show systematic thinking — hypothesis → test → eliminate. Avoid making it sound lucky.",
+        star:{
+          s:"In production, we had an intermittent data corruption bug appearing only under high load — once every few thousand requests.",
+          t:"I needed to reproduce and fix it without taking down the service.",
+          a:"I added structured logging, reproduced it in a load testing environment, and traced it to a race condition in our threading logic. I added mutex locks and wrote regression tests.",
+          r:"The bug was eliminated. I also introduced a runbook for future race condition investigations."
+        }
+      }
+    ]
+  },
+  {
+    category:"🤝 Teamwork & Collaboration",
+    questions:[
+      {
+        q:"Tell me about a time you worked effectively as part of a team.",
+        strategy:"Show your specific contribution, how you enabled others, and what the collective result was.",
+        star:{
+          s:"During a capstone project, our 5-person team had to build a full-stack app in 8 weeks.",
+          t:"I was the backend lead responsible for the API layer and database design.",
+          a:"I created a shared API contract early so the frontend team could work in parallel, ran weekly syncs, and unblocked teammates on technical questions.",
+          r:"We delivered on time with zero merge conflicts on launch day and received an A+ from the panel."
+        }
+      },
+      {
+        q:"Describe a time you had a conflict with a teammate. How did you handle it?",
+        strategy:"Never blame the other person. Show emotional maturity, direct communication, and a win-win outcome.",
+        star:{
+          s:"A teammate and I disagreed on whether to use REST or GraphQL for our API design.",
+          t:"We needed to make a decision quickly to avoid blocking the project.",
+          a:"I proposed we each write a 1-page pros/cons document and present to the team. I listened carefully to their argument, found their point about query flexibility valid, and we agreed on GraphQL for certain endpoints only.",
+          r:"The decision was made in one day with full team buy-in. The app shipped on schedule."
+        }
+      },
+      {
+        q:"Tell me about a time you helped a struggling teammate.",
+        strategy:"Show empathy and coaching ability — critical for senior roles.",
+        star:{
+          s:"A junior teammate was struggling with async JavaScript and falling behind on their tasks.",
+          t:"I wanted to help without making them feel incompetent.",
+          a:"I paired with them for 2 hours, explained async/await concepts with real examples from our codebase, and created a short reference doc they could use independently.",
+          r:"Within a week they were contributing confidently. Two months later they mentored a new intern on the same topic."
+        }
+      }
+    ]
+  },
+  {
+    category:"🔥 Leadership & Ownership",
+    questions:[
+      {
+        q:"Tell me about a time you took initiative or went beyond your role.",
+        strategy:"Show proactivity. Pick something that wasn't asked of you but added real value.",
+        star:{
+          s:"During my internship, I noticed the team had no automated testing, leading to frequent regressions.",
+          t:"This wasn't part of my project scope, but I saw an opportunity to add value.",
+          a:"I spent two evenings setting up Jest and wrote 40 unit tests covering the most critical paths. I then presented it in our team demo.",
+          r:"The team adopted it as a standard. By the time I left, test coverage was at 68% and regression bugs dropped by half."
+        }
+      },
+      {
+        q:"Describe a situation where you had to lead without formal authority.",
+        strategy:"Show influence through expertise and communication, not title.",
+        star:{
+          s:"On a group project, no one stepped up to organize our workflow and we were falling behind.",
+          t:"I decided to take ownership even though I had no official lead role.",
+          a:"I set up a Notion board, assigned tasks based on everyone's strengths, and ran brief daily check-ins.",
+          r:"We went from 2 weeks behind to delivering 3 days early. The professor asked us to share our process with the class."
+        }
+      }
+    ]
+  },
+  {
+    category:"❌ Failure & Learning",
+    questions:[
+      {
+        q:"Tell me about a time you failed.",
+        strategy:"Be honest. Show accountability (not excuses), what you learned, and how you've grown. Interviewers respect vulnerability.",
+        star:{
+          s:"I missed a critical deadline for a feature that 3 other teams depended on.",
+          t:"I underestimated the complexity of the OAuth integration and didn't raise the risk early enough.",
+          a:"Once I realized I'd miss the date, I immediately communicated to stakeholders, provided a revised timeline, and worked overtime to minimize the delay.",
+          r:"I was 4 days late but delivered a more robust solution. I now break all tasks into daily milestones and flag blockers within 24 hours."
+        }
+      },
+      {
+        q:"Tell me about a time you received critical feedback. How did you respond?",
+        strategy:"Show coachability. The ability to receive and act on feedback is a top trait companies screen for.",
+        star:{
+          s:"My manager told me my code was good but my communication in meetings was too passive — I wasn't sharing my ideas.",
+          t:"I needed to find a way to contribute more visibly in team settings.",
+          a:"I started preparing 1–2 talking points before every meeting, used async Slack messages to share ideas beforehand, and set a personal goal to speak at least once per meeting.",
+          r:"Within 6 weeks, my manager noticed the change and cited it in my performance review as a strength."
+        }
+      }
+    ]
+  },
+  {
+    category:"⏱️ Time Management & Prioritization",
+    questions:[
+      {
+        q:"Describe a time you had multiple competing deadlines. How did you manage?",
+        strategy:"Show a system, not just hustle. Interviewers want to see that you're organized and make intentional tradeoffs.",
+        star:{
+          s:"During finals week I had a group project deadline, two exams, and an internship technical screen in the same 5-day window.",
+          t:"I needed to perform well on all fronts without burning out.",
+          a:"I used time-blocking, negotiated task split with teammates, focused on highest-ROI exam topics, and scheduled the screen for a morning when I'm sharpest.",
+          r:"I passed the screen, got an A- on both exams, and the project was graded top in the class."
+        }
+      },
+      {
+        q:"Tell me about a time you had to work under pressure with a tight deadline.",
+        strategy:"Show calm, structured thinking under stress. Avoid dramatizing.",
+        star:{
+          s:"A client demo was moved up by one week with no warning, and 3 key features were unfinished.",
+          t:"I needed to triage what was demo-critical vs nice-to-have.",
+          a:"I held a 30-minute team triage meeting, cut 2 features from scope, hardcoded demo data for one, and finished the critical feature in 3 days of focused work.",
+          r:"Demo went flawlessly. Client signed a contract extension. Team lead commended my triage decision."
+        }
+      }
+    ]
+  },
+  {
+    category:"🌱 Growth & Motivation",
+    questions:[
+      {
+        q:"Why do you want to work at [Company]?",
+        strategy:"Be specific. Research the company. Connect their mission to YOUR personal story or goals. Generic answers fail.",
+        star:{
+          s:"I've followed [Company]'s engineering blog for over a year and was struck by your work on [specific project/technology].",
+          t:"I'm looking for a place where I can work on large-scale problems and grow as an engineer.",
+          a:"I've been preparing technically and have built projects aligned with your tech stack. I've also spoken to [Name] who works here about the culture.",
+          r:"I'm confident [Company] is where I can make the highest impact and grow the fastest in the next 2–3 years."
+        }
+      },
+      {
+        q:"Where do you see yourself in 5 years?",
+        strategy:"Show ambition + realism. Align with the company's trajectory. Don't say 'your job'.",
+        star:{
+          s:"I see myself as a senior engineer who has shipped systems at scale and started mentoring junior engineers.",
+          t:"I'm building toward that by focusing on depth in distributed systems and breadth in product thinking.",
+          a:"In the near term I want to master backend engineering, and in 5 years lead a small team building a key product.",
+          r:"I believe starting at [Company] gives me the best environment — the engineering bar, the product scope, and the growth opportunities — to get there."
+        }
+      },
+      {
+        q:"What's your greatest strength?",
+        strategy:"Pick one specific, credible strength with a concrete example. Not 'I'm a hard worker.'",
+        star:{
+          s:"My greatest strength is breaking down ambiguous problems into structured, executable plans.",
+          t:"This is especially valuable in early-stage projects where requirements are unclear.",
+          a:"When given an open-ended feature request, I always start with a written plan: constraints, assumptions, edge cases, and milestones before writing code.",
+          r:"This habit has consistently led to faster delivery and fewer surprises — my last 4 projects shipped on or ahead of schedule."
+        }
+      }
+    ]
+  },
+  {
+    category:"🔀 Adaptability & Ambiguity",
+    questions:[
+      {
+        q:"Tell me about a time you had to adapt to a significant change.",
+        strategy:"Show flexibility. Avoid framing change as a problem — frame it as an opportunity.",
+        star:{
+          s:"Halfway through a project, our tech lead left and we had to migrate from a monolith to microservices — a decision I hadn't been part of.",
+          t:"I needed to get up to speed on a new architecture while continuing to deliver.",
+          a:"I spent a weekend on microservices fundamentals, paired with a senior engineer, and proposed a phased migration plan to minimize disruption.",
+          r:"We completed the migration in 6 weeks. I emerged as one of the team's go-to people on service boundaries and inter-service communication."
+        }
+      },
+      {
+        q:"Describe a time you had to make a decision with incomplete information.",
+        strategy:"Show risk assessment, decisiveness, and learning. Indecision is seen as a weakness.",
+        star:{
+          s:"We needed to choose a cloud provider for our startup's infrastructure before we knew our exact scaling requirements.",
+          t:"A delayed decision would block all other engineering work.",
+          a:"I researched the top 3 options, mapped our known requirements to pricing and features, built a comparison matrix, and recommended AWS with a note on migration criteria.",
+          r:"We went with my recommendation. When we eventually grew, the criteria I set made the migration decision straightforward — no arguments needed."
+        }
+      }
+    ]
+  }
+];
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+function getInitials(s){ return s.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
+function fmtDate(s){ const d=new Date(s+'T00:00:00'); return `${MONTHS[d.getMonth()].slice(0,3)} ${d.getDate()}, ${d.getFullYear()}`; }
+
+function CircleProgress({ pct, size=54, color='#7c6af7', weekend=false }) {
+  const r = (size/2)-5;
+  const circ = 2*Math.PI*r;
+  const fill = (pct/100)*circ;
+  return (
+    <div className="ring-wrap" style={{width:size,height:size}}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="rgba(255,255,255,.07)" strokeWidth="5"/>
+        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={weekend?"#fbbf24":color} strokeWidth="5"
+          strokeDasharray={`${fill} ${circ-fill}`} strokeLinecap="round" style={{transition:'stroke-dasharray .6s ease'}}/>
+      </svg>
+      <div className="ring-center" style={{color:weekend?'#fbbf24':color}}>{Math.round(pct)}%</div>
+    </div>
+  );
+}
+
+function Badge({ status }) {
+  const m = {Applied:'b-applied',Interview:'b-interview',Offer:'b-offer',Rejected:'b-rejected'};
+  return <span className={`badge ${m[status]||'b-applied'}`}><span className="bdot"/>{status}</span>;
+}
+
+function ProgressBar({ pct, color }) {
+  return <div className="pb-wrap"><div className="pb-fill" style={{width:`${Math.min(pct,100)}%`,background:color}}/></div>;
+}
+
+// ─── Icons ────────────────────────────────────────────────────────────────────
+const I = {
+  dash:<svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>,
+  apps:<svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>,
+  act:<svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>,
+  goals:<svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>,
+  cal:<svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>,
+  bq:<svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>,
+  settings:<svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>,
+  search:<svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>,
+  bell:<svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>,
+  plus:<svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>,
+  edit:<svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>,
+  trash:<svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>,
+  close:<svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>,
+  menu:<svg width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>,
+  chev:<svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>,
+  prev:<svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>,
+  next:<svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>,
+  check:<svg width="10" height="10" fill="none" stroke="white" strokeWidth="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>,
+  tup:<svg width="11" height="11" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>,
+  tdn:<svg width="11" height="11" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>,
+};
+
+// ─── Storage helpers ──────────────────────────────────────────────────────────
+function loadState(key, def) {
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : def; } catch(e) { return def; }
+}
+function saveState(key, val) {
+  try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) {}
+}
+
+// ─── App ──────────────────────────────────────────────────────────────────────
+function App() {
+  const [page, setPage] = useState('dashboard');
+  const [jobs, setJobs] = useState(() => loadState('jt_jobs', []));
+  const [taskLog, setTaskLog] = useState(() => loadState('jt_tasklog', {})); // { 'YYYY-MM-DD': { taskId: bool } }
+  const [filter, setFilter] = useState('All');
+  const [sortBy, setSortBy] = useState('date');
+  const [search, setSearch] = useState('');
+  const [modal, setModal] = useState(null);
+  const [form, setForm] = useState({company:'',role:'',status:'Applied',date:'',notes:''});
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const today = getTodayStr();
+  const todayWeekend = isWeekend(today);
+  const todayTasks = buildDailyTasks(today);
+  const todayDone = taskLog[today] || {};
+  const donePct = todayTasks.length ? Math.round((Object.values(todayDone).filter(Boolean).length / todayTasks.length)*100) : 0;
+  const allDone = donePct === 100;
+
+  useEffect(()=>{ saveState('jt_jobs', jobs); }, [jobs]);
+  useEffect(()=>{ saveState('jt_tasklog', taskLog); }, [taskLog]);
+
+  function toggleTask(id) {
+    setTaskLog(prev => {
+      const day = { ...(prev[today]||{}) };
+      day[id] = !day[id];
+      return { ...prev, [today]: day };
+    });
+  }
+
+  const stats = useMemo(()=>({
+    total:jobs.length,
+    interviews:jobs.filter(j=>j.status==='Interview').length,
+    offers:jobs.filter(j=>j.status==='Offer').length,
+    rejections:jobs.filter(j=>j.status==='Rejected').length,
+  }),[jobs]);
+
+  const filtered = useMemo(()=>{
+    let out=[...jobs];
+    if(filter!=='All') out=out.filter(j=>j.status===filter);
+    if(search) out=out.filter(j=>`${j.company} ${j.role}`.toLowerCase().includes(search.toLowerCase()));
+    if(sortBy==='date') out.sort((a,b)=>new Date(b.date)-new Date(a.date));
+    if(sortBy==='company') out.sort((a,b)=>a.company.localeCompare(b.company));
+    if(sortBy==='status') out.sort((a,b)=>a.status.localeCompare(b.status));
+    return out;
+  },[jobs,filter,search,sortBy]);
+
+  function openAdd(){setForm({company:'',role:'',status:'Applied',date:today,notes:''});setModal('add');}
+  function openEdit(j){setForm({...j});setModal(j);}
+  function closeModal(){setModal(null);}
+  function saveJob(){
+    if(!form.company||!form.role) return;
+    if(modal==='add') setJobs(j=>[...j,{...form,id:Date.now()}]);
+    else setJobs(j=>j.map(x=>x.id===modal.id?{...form,id:modal.id}:x));
+    closeModal();
+  }
+  function deleteJob(id){ setJobs(j=>j.filter(x=>x.id!==id)); }
+
+  const tod = new Date(today+'T00:00:00');
+  const dayName = DAYS[tod.getDay()];
+
+  return (
+    <div className="app">
+      {/* Overlay for mobile */}
+      {sidebarOpen && <div onClick={()=>setSidebarOpen(false)} style={{position:'fixed',inset:0,background:'rgba(0,0,0,.5)',zIndex:99}}/>}
+
+      {/* Sidebar */}
+      <aside className={`sidebar${sidebarOpen?' open':''}`}>
+        <div className="logo-wrap">
+          <div className="logo-mark">J</div>
+          <div className="logo-name">Job<span>Tracker</span></div>
+        </div>
+        <nav>
+          <div className="nav-group">
+            <div className="nav-lbl">Main</div>
+            {[
+              {id:'dashboard',label:'Dashboard',icon:I.dash},
+              {id:'applications',label:'Applications',icon:I.apps,badge:jobs.length},
+              {id:'activity',label:'Activity',icon:I.act},
+              {id:'goals',label:'Goals',icon:I.goals},
+              {id:'calendar',label:'Calendar',icon:I.cal},
+            ].map(n=>(
+              <div key={n.id} className={`nav-item${page===n.id?' active':''}`} onClick={()=>{setPage(n.id);setSidebarOpen(false);}}>
+                {n.icon}{n.label}
+                {n.badge!==undefined&&<span className="nav-badge">{n.badge}</span>}
+              </div>
+            ))}
+          </div>
+          <div className="nav-group">
+            <div className="nav-lbl">Prep</div>
+            <div className={`nav-item${todayWeekend?' nav-weekend':''}${page==='behavioral'?' active':''}`} onClick={()=>{setPage('behavioral');setSidebarOpen(false);}}>
+              {I.bq}Behavioural Prep {todayWeekend&&'⭐'}
+            </div>
+            <div className={`nav-item${page==='settings'?' active':''}`} onClick={()=>{setPage('settings');setSidebarOpen(false);}}>
+              {I.settings}Settings
+            </div>
+          </div>
+        </nav>
+        <div className="sb-bottom">
+          <div className="user-pill">
+            <div className="ava">N</div>
+            <div className="user-info">
+              <div className="name">Nurmeiram</div>
+              <div className="sub">nurmeirambek04@gmail</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <div className="main">
+        {/* Header */}
+        <header className="header">
+          <button className="ico-btn" onClick={()=>setSidebarOpen(s=>!s)} style={{border:'none',display:'none'}} id="hamburger">{I.menu}</button>
+          <div className="search-w">
+            {I.search}
+            <input placeholder="Search companies or roles..." value={search} onChange={e=>setSearch(e.target.value)}/>
+          </div>
+          <div className="h-actions">
+            <div className="ico-btn">{I.bell}<span className="ndot"/></div>
+            <div className="h-ava">N</div>
+          </div>
+        </header>
+
+        <div className="content">
+          {/* Daily Task Banner — always on top */}
+          <DailyBanner
+            dayName={dayName}
+            today={today}
+            tasks={todayTasks}
+            done={todayDone}
+            pct={donePct}
+            allDone={allDone}
+            weekend={todayWeekend}
+            onToggle={toggleTask}
+            onBehavioral={()=>setPage('behavioral')}
+          />
+
+          {page==='dashboard'&&<DashboardPage stats={stats} jobs={jobs} chartData={CHART_DATA} openAdd={openAdd} filtered={filtered} filter={filter} setFilter={setFilter} sortBy={sortBy} setSortBy={setSortBy} openEdit={openEdit} deleteJob={deleteJob}/>}
+          {page==='applications'&&<ApplicationsPage filtered={filtered} filter={filter} setFilter={setFilter} sortBy={sortBy} setSortBy={setSortBy} openAdd={openAdd} openEdit={openEdit} deleteJob={deleteJob}/>}
+          {page==='activity'&&<ActivityPage taskLog={taskLog} today={today}/>}
+          {page==='goals'&&<GoalsPage taskLog={taskLog} today={today}/>}
+          {page==='calendar'&&<CalendarPage jobs={jobs} taskLog={taskLog}/>}
+          {page==='behavioral'&&<BehavioralPage/>}
+          {page==='settings'&&<SettingsPage/>}
+        </div>
+      </div>
+
+      {/* Job Modal */}
+      {modal&&(
+        <div className="overlay" onClick={e=>e.target===e.currentTarget&&closeModal()}>
+          <div className="modal">
+            <div className="mh">
+              <div className="mh-title">{modal==='add'?'Add Application':'Edit Application'}</div>
+              <button className="mcl" onClick={closeModal}>{I.close}</button>
+            </div>
+            <div className="mb">
+              <div className="frow">
+                <div className="fg"><label className="fl">Company *</label><input className="fi" placeholder="e.g. Google" value={form.company} onChange={e=>setForm(f=>({...f,company:e.target.value}))}/></div>
+                <div className="fg"><label className="fl">Role *</label><input className="fi" placeholder="e.g. SWE Intern" value={form.role} onChange={e=>setForm(f=>({...f,role:e.target.value}))}/></div>
+              </div>
+              <div className="frow">
+                <div className="fg"><label className="fl">Status</label>
+                  <select className="fs" value={form.status} onChange={e=>setForm(f=>({...f,status:e.target.value}))}>
+                    <option>Applied</option><option>Interview</option><option>Offer</option><option>Rejected</option>
+                  </select>
+                </div>
+                <div className="fg"><label className="fl">Date Applied</label><input type="date" className="fi" value={form.date} onChange={e=>setForm(f=>({...f,date:e.target.value}))}/></div>
+              </div>
+              <div className="fg"><label className="fl">Notes</label><textarea className="fta" placeholder="Notes about this application..." value={form.notes} onChange={e=>setForm(f=>({...f,notes:e.target.value}))}/></div>
+            </div>
+            <div className="mf">
+              <button className="btn btn-ghost" onClick={closeModal}>Cancel</button>
+              <button className="btn btn-primary" onClick={saveJob}>{modal==='add'?'Add Application':'Save Changes'}</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Daily Banner ─────────────────────────────────────────────────────────────
+function DailyBanner({ dayName, today, tasks, done, pct, allDone, weekend, onToggle, onBehavioral }) {
+  return (
+    <div className={`daily-banner${weekend?' weekend-banner':''}`}>
+      <div className="db-top">
+        <div>
+          <div className="db-title-row">
+            <span className="db-emoji">{weekend?'🌟':'🎯'}</span>
+            <div>
+              <div className="db-title">{weekend?'Weekend Hustle':'Daily Mission'} — {dayName}</div>
+              <div className="db-date">{fmtDate(today)} · {allDone?'🏆 All tasks completed!':'Complete all tasks to level up'}</div>
+            </div>
+          </div>
+        </div>
+        <div className="db-progress-wrap">
+          <CircleProgress pct={pct} size={60} weekend={weekend}/>
+        </div>
+      </div>
+      <div className="db-tasks">
+        {tasks.map(t=>{
+          const checked = !!done[t.id];
+          return (
+            <div key={t.id} className={`task-card${t.isWeekend?' weekend-task':''}${checked?' done':''}`} onClick={()=>{
+              if(t.id==='behavioral') onBehavioral();
+              onToggle(t.id);
+            }}>
+              <div className="task-check">{checked&&I.check}</div>
+              <div className="task-info">
+                <div className="task-chip" style={t.isWeekend?{}:{background:'rgba(124,106,247,.15)',color:'#a78bfa'}}>{t.emoji} {t.chip}</div>
+                <div className="t-label">{t.label}</div>
+                <div className="t-sub">{t.sub}</div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ─── Dashboard ────────────────────────────────────────────────────────────────
+function DashboardPage({ stats, jobs, chartData, openAdd, filtered, filter, setFilter, sortBy, setSortBy, openEdit, deleteJob }) {
+  return (
+    <>
+      <div className="sech">
+        <div>
+          <div className="sec-title">Dashboard Overview</div>
+          <div className="sec-sub">Your job search at a glance</div>
+        </div>
+        <button className="btn btn-primary" onClick={openAdd}>{I.plus} Add Application</button>
+      </div>
+      <div className="stats-grid">
+        <StatCard icon="📋" label="Total Applications" value={stats.total} trend="+12%" dir="up" color="var(--accent2)" bg="rgba(124,106,247,.12)"/>
+        <StatCard icon="🎯" label="Interviews" value={stats.interviews} trend="+5%" dir="up" color="var(--orange)" bg="var(--orangel)"/>
+        <StatCard icon="🏆" label="Offers" value={stats.offers} trend="+2" dir="up" color="var(--green)" bg="var(--greenl)"/>
+        <StatCard icon="❌" label="Rejections" value={stats.rejections} trend="-3%" dir="down" color="var(--red)" bg="var(--redl)"/>
+      </div>
+      <div className="two-col">
+        <div>
+          <div className="panel">
+            <div className="ph">
+              <div><div className="ph-title">Recent Applications</div></div>
+              <div className="fbar">
+                {['All','Applied','Interview','Offer','Rejected'].map(s=>(
+                  <span key={s} className={`fchip${filter===s?' active':''}`} onClick={()=>setFilter(s)}>{s}</span>
+                ))}
+              </div>
+            </div>
+            <div className="tbl-wrap">
+              <table>
+                <thead><tr><th>Company</th><th>Status</th><th>Date</th><th></th></tr></thead>
+                <tbody>
+                  {filtered.length===0&&(
+                    <tr><td colSpan={4}>
+                      <div className="empty" style={{padding:'32px 24px'}}>
+                        <div style={{fontSize:36,marginBottom:10}}>📭</div>
+                        <div style={{fontFamily:'Bricolage Grotesque',fontSize:22,fontWeight:800,color:'var(--txt)',marginBottom:8}}>No applications yet</div>
+                        <div style={{fontSize:13}}>Click "+ Add Application" to log your first one</div>
+                      </div>
+                    </td></tr>
+                  )}
+                  {filtered.slice(0,6).map(j=>(
+                    <tr key={j.id}>
+                      <td><div className="co-cell"><div className="co-logo">{getInitials(j.company)}</div><div><div className="co-name">{j.company}</div><div className="co-role">{j.role}</div></div></div></td>
+                      <td><Badge status={j.status}/></td>
+                      <td style={{color:'var(--txt3)',fontSize:12.5}}>{j.date}</td>
+                      <td><div className="act-cell">
+                        <button className="act-btn" onClick={()=>openEdit(j)}>{I.edit}</button>
+                        <button className="act-btn del" onClick={()=>deleteJob(j.id)}>{I.trash}</button>
+                      </div></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div className="panel" style={{marginBottom:18}}>
+            <div className="ph"><div className="ph-title">Applications Over Time</div></div>
+            <BarChart data={chartData}/>
+          </div>
+          <div className="panel">
+            <div className="ph"><div className="ph-title">Today's Progress</div></div>
+            <div className="act-grid">
+              <ActRow label="Applications Sent" icon="📤" color="var(--accent)" bg="rgba(124,106,247,.15)" cur={3} tot={15}/>
+              <ActRow label="Leetcode Solved" icon="💻" color="var(--orange)" bg="var(--orangel)" cur={2} tot={3}/>
+              <ActRow label="Review Done" icon="🔄" color="var(--green)" bg="var(--greenl)" cur={1} tot={2}/>
+              <ActRow label="LinkedIn Connects" icon="🤝" color="var(--blue)" bg="var(--bluel)" cur={3} tot={5}/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function StatCard({icon,label,value,trend,dir,color,bg}){
+  return (
+    <div className="stat-card">
+      <div className="sc-top">
+        <div className="sc-icon" style={{background:bg,fontSize:20}}>{icon}</div>
+        <span className={`sc-trend ${dir==='up'?'tup':'tdn'}`}>{dir==='up'?I.tup:I.tdn}{trend}</span>
+      </div>
+      <div className="sc-num" style={{color}}>{value}</div>
+      <div className="sc-lbl">{label}</div>
+    </div>
+  );
+}
+
+function ActRow({label,icon,color,bg,cur,tot}){
+  return (
+    <div className="act-item">
+      <div className="act-icon" style={{background:bg}}>{icon}</div>
+      <div className="act-info">
+        <div className="act-lbl">{label}</div>
+        <ProgressBar pct={(cur/tot)*100} color={color}/>
+      </div>
+      <div className="act-count" style={{color}}>{cur}/{tot}</div>
+    </div>
+  );
+}
+
+function BarChart({data}){
+  const mx=Math.max(...data.map(d=>d.apps));
+  return (
+    <div className="chart-wrap">
+      <div className="bar-chart">
+        {data.map(d=>(
+          <div key={d.label} className="bar-col">
+            <div style={{flex:1,width:'100%',display:'flex',alignItems:'flex-end',gap:3}}>
+              <div className="bar-fill" style={{flex:1,height:`${(d.apps/mx)*100}%`,background:'var(--accent)',opacity:.85}}/>
+              <div className="bar-fill" style={{flex:1,height:`${(d.interviews/mx)*100}%`,background:'var(--orange)',opacity:.85}}/>
+            </div>
+            <span className="bar-lbl">{d.label}</span>
+          </div>
+        ))}
+      </div>
+      <div className="chart-legend">
+        <div className="leg-item"><div className="leg-dot" style={{background:'var(--accent)'}}/> Applications</div>
+        <div className="leg-item"><div className="leg-dot" style={{background:'var(--orange)'}}/> Interviews</div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Applications Page ────────────────────────────────────────────────────────
+function ApplicationsPage({filtered,filter,setFilter,sortBy,setSortBy,openAdd,openEdit,deleteJob}){
+  return (
+    <>
+      <div className="sech">
+        <div><div className="sec-title">All Applications</div><div className="sec-sub">{filtered.length} entries</div></div>
+        <button className="btn btn-primary" onClick={openAdd}>{I.plus} Add Application</button>
+      </div>
+      <div className="panel">
+        <div className="ph">
+          <div className="fbar">
+            {['All','Applied','Interview','Offer','Rejected'].map(s=>(
+              <span key={s} className={`fchip${filter===s?' active':''}`} onClick={()=>setFilter(s)}>{s}</span>
+            ))}
+          </div>
+          <select className="sort-sel" value={sortBy} onChange={e=>setSortBy(e.target.value)}>
+            <option value="date">Sort: Date</option>
+            <option value="company">Sort: Company</option>
+            <option value="status">Sort: Status</option>
+          </select>
+        </div>
+        <div className="tbl-wrap">
+          <table>
+            <thead><tr><th>Company</th><th>Role</th><th>Status</th><th>Date</th><th>Notes</th><th>Actions</th></tr></thead>
+            <tbody>
+              {filtered.length===0&&<tr><td colSpan={6}><div className="empty"><p>No applications found.</p></div></td></tr>}
+              {filtered.map(j=>(
+                <tr key={j.id}>
+                  <td><div className="co-cell"><div className="co-logo">{getInitials(j.company)}</div><div className="co-name">{j.company}</div></div></td>
+                  <td><span className="role-txt">{j.role}</span></td>
+                  <td><Badge status={j.status}/></td>
+                  <td style={{color:'var(--txt3)',fontSize:12.5}}>{j.date}</td>
+                  <td><div className="notes-td">{j.notes||'—'}</div></td>
+                  <td><div className="act-cell">
+                    <button className="act-btn" onClick={()=>openEdit(j)}>{I.edit}</button>
+                    <button className="act-btn del" onClick={()=>deleteJob(j.id)}>{I.trash}</button>
+                  </div></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ─── Activity Page ────────────────────────────────────────────────────────────
+function ActivityPage({taskLog,today}){
+  // Calculate weekly completions
+  const weekDays = Array.from({length:7},(_,i)=>{
+    const d=new Date(today+'T00:00:00');
+    d.setDate(d.getDate()-(6-i));
+    return d.toISOString().slice(0,10);
+  });
+  const weekData = weekDays.map(d=>{
+    const tasks=buildDailyTasks(d);
+    const done=taskLog[d]||{};
+    const cnt=Object.values(done).filter(Boolean).length;
+    return {label:DAYS[new Date(d+'T00:00:00').getDay()],tasks:tasks.length,done:cnt};
+  });
+  const mx=Math.max(...weekData.map(w=>w.tasks),1);
+
+  return (
+    <>
+      <div className="sech"><div><div className="sec-title">Activity Tracker</div><div className="sec-sub">Your daily progress</div></div></div>
+      <div className="two-col">
+        <div className="panel">
+          <div className="ph"><div className="ph-title">Today's Tasks</div></div>
+          <div className="act-grid">
+            {buildDailyTasks(today).map(t=>{
+              const done=!!(taskLog[today]||{})[t.id];
+              return <div key={t.id} className="act-item">
+                <div className="act-icon" style={{background:'rgba(124,106,247,.12)'}}>{t.emoji}</div>
+                <div className="act-info">
+                  <div className="act-lbl">{t.label}</div>
+                  <ProgressBar pct={done?100:0} color={done?'var(--green)':'var(--border2)'}/>
+                </div>
+                <div className="act-count" style={{color:done?'var(--green)':'var(--txt3)'}}>{done?'✓':'–'}</div>
+              </div>;
+            })}
+          </div>
+        </div>
+        <div className="panel">
+          <div className="ph"><div className="ph-title">7-Day Task Completion</div></div>
+          <div className="chart-wrap">
+            <div className="bar-chart">
+              {weekData.map(d=>(
+                <div key={d.label} className="bar-col">
+                  <div style={{flex:1,width:'100%',display:'flex',alignItems:'flex-end',gap:3}}>
+                    <div className="bar-fill" style={{flex:1,height:`${(d.tasks/mx)*100}%`,background:'var(--border2)',opacity:.5}}/>
+                    <div className="bar-fill" style={{flex:1,height:`${(d.done/mx)*100}%`,background:'var(--green)',opacity:.9}}/>
+                  </div>
+                  <span className="bar-lbl">{d.label}</span>
+                </div>
+              ))}
+            </div>
+            <div className="chart-legend">
+              <div className="leg-item"><div className="leg-dot" style={{background:'var(--border2)'}}/> Total Tasks</div>
+              <div className="leg-item"><div className="leg-dot" style={{background:'var(--green)'}}/> Completed</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ─── Goals Page ────────────────────────────────────────────────────────────────
+function GoalsPage({taskLog,today}){
+  const [goals,setGoals]=useState(()=>loadState('jt_goals',{apps:15,lc:3,review:2,linkedin:5}));
+  const [draftGoals,setDraftGoals]=useState(()=>loadState('jt_goals',{apps:15,lc:3,review:2,linkedin:5}));
+  const [counts,setCounts]=useState(()=>loadState('jt_counts_'+today,{apps:0,lc:0,review:0,linkedin:0}));
+  const [saved,setSaved]=useState(false);
+
+  useEffect(()=>{ saveState('jt_counts_'+today,counts); },[counts,today]);
+
+  // Streak
+  let streak=0;
+  const todayD=new Date(today+'T00:00:00');
+  for(let i=0;i<60;i++){
+    const d=new Date(todayD);d.setDate(d.getDate()-i);
+    const ds=d.toISOString().slice(0,10);
+    const tasks=buildDailyTasks(ds);
+    const done=taskLog[ds]||{};
+    const cnt=Object.values(done).filter(Boolean).length;
+    if(cnt===tasks.length&&tasks.length>0) streak++;
+    else break;
+  }
+
+  function saveGoals(){
+    setGoals({...draftGoals});
+    saveState('jt_goals',draftGoals);
+    setSaved(true);
+    setTimeout(()=>setSaved(false),2000);
+  }
+
+  const goalRows=[
+    {key:'apps',label:'Job Applications / day',color:'var(--accent)',icon:'📤'},
+    {key:'lc',label:'Leetcode Problems / day',color:'var(--orange)',icon:'💻'},
+    {key:'review',label:'Past Review Sessions / day',color:'var(--green)',icon:'🔄'},
+    {key:'linkedin',label:'LinkedIn Connections / day',color:'var(--blue)',icon:'🤝'},
+  ];
+
+  return (
+    <>
+      <div className="sech"><div><div className="sec-title">Goals & Targets</div><div className="sec-sub">Set daily goals and track your actual progress</div></div></div>
+      <div className="two-col">
+        <div>
+          <div className="panel" style={{marginBottom:18}}>
+            <div className="ph"><div className="ph-title">Today's Progress — Log Your Work</div></div>
+            <div style={{padding:'12px 16px',display:'grid',gap:10}}>
+              {goalRows.map(r=>{
+                const pct=(counts[r.key]/goals[r.key])*100;
+                return (
+                  <div key={r.key} className="goal-item">
+                    <div className="gt">
+                      <span className="g-lbl">{r.icon} {r.label}</span>
+                      <span className="g-pct" style={{color:r.color}}>{Math.round(Math.min(pct,100))}%</span>
+                    </div>
+                    <ProgressBar pct={pct} color={r.color}/>
+                    <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginTop:8}}>
+                      <div className="g-frac">{counts[r.key]} of {goals[r.key]}</div>
+                      <div style={{display:'flex',alignItems:'center',gap:6}}>
+                        <button onClick={()=>setCounts(c=>({...c,[r.key]:Math.max(0,c[r.key]-1)}))}
+                          style={{width:26,height:26,borderRadius:7,border:'1px solid var(--border)',background:'var(--surface)',color:'var(--txt)',cursor:'pointer',fontSize:16,display:'flex',alignItems:'center',justifyContent:'center'}}>−</button>
+                        <input type="number" min={0} max={999}
+                          value={counts[r.key]}
+                          onChange={e=>setCounts(c=>({...c,[r.key]:Math.max(0,parseInt(e.target.value)||0)}))}
+                          style={{width:48,textAlign:'center',padding:'4px',borderRadius:7,border:'1px solid var(--border)',background:'var(--surface)',color:'var(--txt)',fontFamily:'inherit',fontSize:13,outline:'none'}}
+                        />
+                        <button onClick={()=>setCounts(c=>({...c,[r.key]:c[r.key]+1}))}
+                          style={{width:26,height:26,borderRadius:7,border:'1px solid var(--accent)',background:'rgba(124,106,247,.15)',color:'var(--accent2)',cursor:'pointer',fontSize:16,display:'flex',alignItems:'center',justifyContent:'center'}}>+</button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <div className="panel">
+            <div className="ph"><div><div className="ph-title">🔥 Streak</div><div className="ph-sub">Consecutive days all tasks completed</div></div></div>
+            <div style={{padding:'20px 18px',textAlign:'center'}}>
+              <div style={{fontFamily:'Bricolage Grotesque',fontSize:80,fontWeight:800,color:'var(--yellow)',lineHeight:1}}>{streak}</div>
+              <div style={{color:'var(--txt3)',fontSize:14,marginTop:8}}>day{streak!==1?'s':''} in a row</div>
+              {streak>=7&&<div style={{marginTop:10,fontSize:13,color:'var(--yellow)',fontWeight:700}}>🏆 On fire! Keep going!</div>}
+              {streak===0&&<div style={{marginTop:10,fontSize:13,color:'var(--txt3)'}}>Complete all daily tasks to start your streak!</div>}
+            </div>
+          </div>
+        </div>
+        <div className="panel">
+          <div className="ph">
+            <div className="ph-title">Set Daily Targets</div>
+            <button className="btn btn-primary btn-sm" onClick={saveGoals} style={{background:saved?'var(--green)':undefined,transition:'background .3s'}}>
+              {saved?'✓ Saved!':'Save Targets'}
+            </button>
+          </div>
+          <div style={{padding:'14px 16px',display:'grid',gap:10}}>
+            {goalRows.map(r=>(
+              <div key={r.key} style={{background:'var(--surface2)',borderRadius:10,padding:'12px 14px',display:'flex',alignItems:'center',gap:10}}>
+                <span style={{fontSize:20}}>{r.icon}</span>
+                <span style={{flex:1,fontWeight:600,fontSize:13,color:'var(--txt)'}}>{r.label}</span>
+                <div style={{display:'flex',alignItems:'center',gap:6}}>
+                  <button onClick={()=>setDraftGoals(g=>({...g,[r.key]:Math.max(1,g[r.key]-1)}))}
+                    style={{width:24,height:24,borderRadius:6,border:'1px solid var(--border)',background:'var(--surface)',color:'var(--txt)',cursor:'pointer',fontSize:14,display:'flex',alignItems:'center',justifyContent:'center'}}>−</button>
+                  <input type="number" min={1} max={100}
+                    value={draftGoals[r.key]}
+                    onChange={e=>setDraftGoals(g=>({...g,[r.key]:Math.max(1,parseInt(e.target.value)||1)}))}
+                    style={{width:52,textAlign:'center',padding:'5px',borderRadius:7,border:'1.5px solid var(--border)',background:'var(--surface)',color:'var(--txt)',fontFamily:'inherit',fontSize:14,outline:'none'}}
+                  />
+                  <button onClick={()=>setDraftGoals(g=>({...g,[r.key]:g[r.key]+1}))}
+                    style={{width:24,height:24,borderRadius:6,border:'1px solid var(--accent)',background:'rgba(124,106,247,.15)',color:'var(--accent2)',cursor:'pointer',fontSize:14,display:'flex',alignItems:'center',justifyContent:'center'}}>+</button>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div style={{padding:'0 16px 16px',color:'var(--txt3)',fontSize:12}}>
+            ⚡ Click "Save Targets" to persist your goals across sessions.
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ─── Calendar Page ────────────────────────────────────────────────────────────
+function CalendarPage({jobs,taskLog}){
+  const today=getTodayStr();
+  const [calYear,setCalYear]=useState(new Date().getFullYear());
+  const [calMonth,setCalMonth]=useState(new Date().getMonth());
+  const [selected,setSelected]=useState(today);
+
+  function prevMonth(){if(calMonth===0){setCalMonth(11);setCalYear(y=>y-1);}else setCalMonth(m=>m-1);}
+  function nextMonth(){if(calMonth===11){setCalMonth(0);setCalYear(y=>y+1);}else setCalMonth(m=>m+1);}
+
+  const firstDay=new Date(calYear,calMonth,1).getDay();
+  const daysInMonth=new Date(calYear,calMonth+1,0).getDate();
+
+  function getDayStr(d){ return `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
+
+  // Jobs applied on a date
+  function jobsOnDate(ds){ return jobs.filter(j=>j.date===ds); }
+  function tasksOnDate(ds){ const t=buildDailyTasks(ds); const done=taskLog[ds]||{}; return {tasks:t,done}; }
+
+  const selJobs=jobsOnDate(selected);
+  const {tasks:selTasks,done:selDone}=tasksOnDate(selected);
+  const selCompleted=selTasks.filter(t=>selDone[t.id]);
+  const selMissed=selTasks.filter(t=>!selDone[t.id]);
+
+  return (
+    <>
+      <div className="sech"><div><div className="sec-title">Calendar View</div><div className="sec-sub">Everything you did and missed, day by day</div></div></div>
+      <div className="two-col">
+        <div className="panel">
+          <div className="cal-wrap">
+            <div className="cal-nav">
+              <button className="cal-nav-btn" onClick={prevMonth}>{I.prev}</button>
+              <div className="cal-month">{MONTHS[calMonth]} {calYear}</div>
+              <button className="cal-nav-btn" onClick={nextMonth}>{I.next}</button>
+            </div>
+            <div className="cal-grid">
+              {DAYS.map(d=><div key={d} className="cal-dow">{d}</div>)}
+              {Array.from({length:firstDay},(_,i)=><div key={'e'+i} className="cal-day empty-day"/>)}
+              {Array.from({length:daysInMonth},(_,i)=>{
+                const d=i+1;
+                const ds=getDayStr(d);
+                const isToday=ds===today;
+                const isSel=ds===selected;
+                const {tasks,done}=tasksOnDate(ds);
+                const doneCnt=tasks.filter(t=>done[t.id]).length;
+                const hasJobs=jobsOnDate(ds).length>0;
+                const hasData=doneCnt>0||hasJobs;
+                const isWe=isWeekend(ds);
+                const allDoneDay=doneCnt===tasks.length&&tasks.length>0;
+                return (
+                  <div key={d} className={`cal-day${isToday?' today':''}${isSel?' selected':''}${hasData?' has-data':''}${isWe&&!isSel?' weekend-day':''}`}
+                    onClick={()=>setSelected(ds)}>
+                    {d}
+                    <div className="cal-dots">
+                      {allDoneDay&&<div className="cal-dot" style={{background:'var(--green)'}}/>}
+                      {!allDoneDay&&doneCnt>0&&<div className="cal-dot" style={{background:'var(--yellow)'}}/>}
+                      {hasJobs&&<div className="cal-dot" style={{background:'var(--accent)'}}/>}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div style={{marginTop:14,display:'flex',gap:14,flexWrap:'wrap'}}>
+              {[
+                {color:'var(--green)',label:'All tasks done'},
+                {color:'var(--yellow)',label:'Partial tasks'},
+                {color:'var(--accent)',label:'Applications sent'},
+              ].map(l=><div key={l.label} className="leg-item"><div className="cal-dot" style={{background:l.color,width:8,height:8}}/>{l.label}</div>)}
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div className="cal-detail">
+            <div className="cal-detail-title">📅 {fmtDate(selected)}{isWeekend(selected)?' 🌟 Weekend':''}</div>
+            <div className="cd-section">
+              <div className="cd-lbl">✅ Completed Tasks ({selCompleted.length})</div>
+              <div className="cd-items">
+                {selCompleted.length===0&&<div style={{color:'var(--txt3)',fontSize:12.5}}>None completed</div>}
+                {selCompleted.map(t=>(
+                  <div key={t.id} className="cd-item">
+                    <div className="cd-check done">{I.check}</div>
+                    <span style={{color:'var(--txt)',fontSize:12.5,fontWeight:500}}>{t.emoji} {t.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="cd-section">
+              <div className="cd-lbl">❌ Missed Tasks ({selMissed.length})</div>
+              <div className="cd-items">
+                {selMissed.length===0&&<div style={{color:'var(--green)',fontSize:12.5}}>Nothing missed! 🎉</div>}
+                {selMissed.map(t=>(
+                  <div key={t.id} className="cd-item">
+                    <div className="cd-check miss"><svg width="10" height="10" fill="none" stroke="white" strokeWidth="3" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+                    <span style={{color:'var(--txt2)',fontSize:12.5}}>{t.emoji} {t.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            {selJobs.length>0&&(
+              <div className="cd-section">
+                <div className="cd-lbl">📤 Applications Sent ({selJobs.length})</div>
+                <div className="cd-items">
+                  {selJobs.map(j=>(
+                    <div key={j.id} className="cd-item" style={{flexDirection:'column',alignItems:'flex-start',gap:3,background:'var(--surface)',borderRadius:8,padding:'8px 10px'}}>
+                      <div style={{fontWeight:700,fontSize:13,color:'var(--txt)'}}>{j.company}</div>
+                      <div style={{fontSize:11.5,color:'var(--txt3)'}}>{j.role}</div>
+                      <Badge status={j.status}/>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ─── Behavioral Prep ──────────────────────────────────────────────────────────
+function BehavioralPage(){
+  const [openCat,setOpenCat]=useState(null);
+  const [openQ,setOpenQ]=useState({});
+
+  function toggleQ(catI,qI){
+    setOpenQ(prev=>{
+      const k=`${catI}-${qI}`;
+      return {...prev,[k]:!prev[k]};
+    });
+  }
+
+  return (
+    <>
+      <div className="sech">
+        <div>
+          <div className="sec-title">🎤 Behavioural Interview Prep</div>
+          <div className="sec-sub">STAR-method answers for every common question · Click any question to see your strategy</div>
+        </div>
+        <div style={{background:'rgba(251,191,36,.12)',border:'1px solid rgba(251,191,36,.3)',borderRadius:10,padding:'8px 14px',fontSize:12.5,color:'var(--yellow)',fontWeight:600}}>
+          ⭐ Featured on Weekends
+        </div>
+      </div>
+
+      {/* STAR legend */}
+      <div style={{background:'var(--surface)',border:'1px solid var(--border)',borderRadius:12,padding:'14px 18px',marginBottom:20,display:'flex',gap:16,flexWrap:'wrap',alignItems:'center'}}>
+        <span style={{fontFamily:'Bricolage Grotesque',fontSize:20,fontWeight:800,color:'var(--txt)'}}>STAR Method:</span>
+        {[['S','Situation','var(--blue)','rgba(96,165,250,.15)'],['T','Task','var(--yellow)','rgba(251,191,36,.15)'],['A','Action','var(--accent2)','rgba(124,106,247,.15)'],['R','Result','var(--green)','rgba(34,211,160,.15)']].map(([k,v,c,bg])=>(
+          <div key={k} style={{display:'flex',alignItems:'center',gap:6}}>
+            <span style={{background:bg,color:c,padding:'3px 9px',borderRadius:20,fontSize:11,fontWeight:800}}>{k}</span>
+            <span style={{fontSize:12.5,color:'var(--txt2)'}}>{v}</span>
+          </div>
+        ))}
+        <div style={{marginLeft:'auto',fontSize:12,color:'var(--txt3)'}}>
+          {BQ_DATA.reduce((a,c)=>a+c.questions.length,0)} questions across {BQ_DATA.length} categories
+        </div>
+      </div>
+
+      <div className="bq-sections">
+        {BQ_DATA.map((cat,ci)=>(
+          <div key={ci} className="bq-cat">
+            <div className="bq-cat-header" onClick={()=>setOpenCat(openCat===ci?null:ci)}>
+              <span className="bq-cat-emoji">{cat.category.split(' ')[0]}</span>
+              <span className="bq-cat-title">{cat.category.slice(cat.category.indexOf(' ')+1)}</span>
+              <span className="bq-cat-count">{cat.questions.length} questions</span>
+              <span style={{color:'var(--txt3)',transition:'transform .2s',transform:openCat===ci?'rotate(180deg)':'none'}}>{I.chev}</span>
+            </div>
+            {openCat===ci&&(
+              <div className="bq-cat-body">
+                {cat.questions.map((q,qi)=>{
+                  const key=`${ci}-${qi}`;
+                  const open=!!openQ[key];
+                  return (
+                    <div key={qi} className="bq-item">
+                      <div className="bq-q" onClick={()=>toggleQ(ci,qi)}>
+                        <span className="bq-q-num">Q{qi+1}</span>
+                        <span className="bq-q-text">{q.q}</span>
+                        <span className={`bq-arrow${open?' open':''}`}>{I.chev}</span>
+                      </div>
+                      {open&&(
+                        <div className="bq-answer">
+                          <div className="strategy-box" style={{marginBottom:10}}>
+                            <div className="strategy-title">💡 Strategy</div>
+                            <div className="strategy-text">{q.strategy}</div>
+                          </div>
+                          <div className="bq-star">
+                            <div className="star-row"><span className="star-tag star-s">S · Situation</span><div className="star-text">{q.star.s}</div></div>
+                            <div className="star-row"><span className="star-tag star-t">T · Task</span><div className="star-text">{q.star.t}</div></div>
+                            <div className="star-row"><span className="star-tag star-a">A · Action</span><div className="star-text">{q.star.a}</div></div>
+                            <div className="star-row"><span className="star-tag star-r">R · Result</span><div className="star-text">{q.star.r}</div></div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+
+// ─── Settings Page ────────────────────────────────────────────────────────────
+function SettingsPage(){
+  const [profile,setProfile]=useState(()=>loadState('jt_profile',{
+    name:'Nurmeiram Bekova',
+    email:'nurmeirambek04@gmail.com',
+    role:'Software Engineer Intern',
+    location:'Kazakhstan',
+    github:'',
+    linkedin:'',
+    bio:'',
+  }));
+  const [saved,setSaved]=useState(false);
+  const [cleared,setCleared]=useState(false);
+
+  function saveProfile(){
+    saveState('jt_profile',profile);
+    setSaved(true);
+    setTimeout(()=>setSaved(false),2500);
+  }
+
+  function clearAllData(){
+    if(!window.confirm('Clear ALL saved data (jobs, tasks, profile)? This cannot be undone.')) return;
+    ['jt_jobs','jt_tasklog','jt_profile','jt_goals'].forEach(k=>{ try{localStorage.removeItem(k);}catch(e){} });
+    setCleared(true);
+    setTimeout(()=>window.location.reload(),1000);
+  }
+
+  const fields=[
+    {key:'name',label:'Full Name',placeholder:'Your full name'},
+    {key:'email',label:'Email Address',placeholder:'your@email.com',type:'email'},
+    {key:'role',label:'Target Role',placeholder:'e.g. Software Engineer Intern'},
+    {key:'location',label:'Location',placeholder:'City, Country'},
+    {key:'github',label:'GitHub URL',placeholder:'https://github.com/username'},
+    {key:'linkedin',label:'LinkedIn URL',placeholder:'https://linkedin.com/in/username'},
+  ];
+
+  return (
+    <>
+      <div className="sech"><div><div className="sec-title">Settings</div><div className="sec-sub">All changes are saved to your browser</div></div></div>
+      <div style={{display:'grid',gap:20,maxWidth:580}}>
+
+        {/* Profile */}
+        <div className="panel">
+          <div className="ph">
+            <div><div className="ph-title">👤 Profile</div><div className="ph-sub">Your personal information</div></div>
+          </div>
+          <div style={{padding:'16px 18px',display:'grid',gap:13}}>
+            {fields.map(f=>(
+              <div key={f.key} className="fg">
+                <label className="fl">{f.label}</label>
+                <input className="fi" type={f.type||'text'} placeholder={f.placeholder}
+                  value={profile[f.key]||''}
+                  onChange={e=>setProfile(p=>({...p,[f.key]:e.target.value}))}
+                />
+              </div>
+            ))}
+            <div className="fg">
+              <label className="fl">Bio / About</label>
+              <textarea className="fta" placeholder="Short bio for networking messages..."
+                value={profile.bio||''}
+                onChange={e=>setProfile(p=>({...p,bio:e.target.value}))}
+              />
+            </div>
+            <div style={{display:'flex',gap:10,alignItems:'center',marginTop:4}}>
+              <button className="btn btn-primary" onClick={saveProfile}
+                style={{background:saved?'var(--green)':undefined,transition:'background .3s'}}>
+                {saved?'✓ Saved!':'Save Profile'}
+              </button>
+              {saved&&<span style={{fontSize:12,color:'var(--green)'}}>Profile saved to browser storage</span>}
+            </div>
+          </div>
+        </div>
+
+        {/* App Stats */}
+        <div className="panel">
+          <div className="ph"><div className="ph-title">📊 App Info</div></div>
+          <div style={{padding:'14px 18px',display:'grid',gap:10}}>
+            {[
+              ['Version','2.0 — JobTracker Pro'],
+              ['Storage','Browser localStorage'],
+              ['Data','Jobs, tasks, goals saved automatically'],
+            ].map(([k,v])=>(
+              <div key={k} style={{display:'flex',justifyContent:'space-between',padding:'10px 12px',background:'var(--surface2)',borderRadius:8}}>
+                <span style={{color:'var(--txt3)',fontSize:13}}>{k}</span>
+                <span style={{color:'var(--txt)',fontSize:13,fontWeight:600}}>{v}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Danger zone */}
+        <div className="panel" style={{border:'1px solid rgba(248,113,113,.25)'}}>
+          <div className="ph"><div><div className="ph-title" style={{color:'var(--red)'}}>⚠️ Danger Zone</div><div className="ph-sub">These actions cannot be undone</div></div></div>
+          <div style={{padding:'14px 18px'}}>
+            <button className="btn btn-danger" onClick={clearAllData}>
+              {cleared?'Clearing...':'Clear All Data'}
+            </button>
+            <div style={{marginTop:8,fontSize:12,color:'var(--txt3)'}}>Removes all jobs, task history, and settings from this browser.</div>
+          </div>
+        </div>
+
+      </div>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+<style>
+@media(max-width:768px){#hamburger{display:flex!important}}
+</style>
+</body>
+</html>
